@@ -67,6 +67,8 @@ public class Login implements ActionListener {
 		
 		if(user.equals("sunny") && password.equals("cs2212")) {
 			success.setText("Login Successful!");
+		}else {
+			success.setText("INVALID LOGIN!");
 		}
 		
 	}
