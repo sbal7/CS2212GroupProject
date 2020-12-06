@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class mainPage implements ActionListener {
@@ -101,7 +102,7 @@ public class mainPage implements ActionListener {
         frame.getContentPane().add(removeCountryBox);
 
         //drop down for analysis
-        String[] analysis = new String[]{"Total Covid Cases", "Cases per Capita", "Growth Rate", "Total Male Cases", "Total Female Cases", "Male/Female Ratio"};
+        String[] analysis = new String[]{"Total Covid Cases", "Cases per Capita", "Growth Rate", "Total Male Cases", "Total Female Cases", "Male Cases Per Capita", "Female Cases Per Capita"};
         analysisBox = new JComboBox<>(analysis);
         analysisBox.setBounds(482, 585, 180, 27);
         frame.getContentPane().add(analysisBox);
@@ -199,12 +200,12 @@ public class mainPage implements ActionListener {
         //Read country list and compare to country object array, add all in country list to new array and send array to analysis engine
         Country[]dataArray = new Country[countryList.size()];
         for(int i = 0; i < countryList.size(); i++){
-            for (int j = 0; i < countryArray.length; j++){
-                if (countryArray[j].getName().equalsIgnoreCase(countryList.get(i))){
-                    dataArray[i] = countryArray[j];
+            //for (int j = 0; i < countryArray.length; j++){
+                //if (countryArray[j].getName().equalsIgnoreCase(countryList.get(i))){
+        	dataArray[i] = countryArray[i];
                 }
-            }
-        }
+            //}
+        //}
         //Read analysis type and import and return data
         String Analysis = analysisBox.getSelectedItem().toString();
         double [] results = new double[dataArray.length];
@@ -224,14 +225,21 @@ public class mainPage implements ActionListener {
         else if (Analysis.equals("Total Female Cases")){
             results = engine.TotalFemaleCases();
         }
-        else if (Analysis.equals("Male/Female Ratio")){
-            results = engine.MaleToFemaleRatio();
+        else if (Analysis.equals("Male Cases Per Capita")){
+            results = engine.MalePerCapita();
+        }
+        else if (Analysis.equals("Female Cases Per Capita")){
+            results = engine.FemalePerCapita();
         }
 
         //Display results
-        for (int i = 0; i < dataArray.length; i++) {
-            displayResults(results[i], dataArray[i]);
-        }
+        for (int i = 0; i < results.length; i++) {
+        	outputPanel.setText(null);
+        	outputPanel.append(Arrays.toString(results));
+        	}
+        //for (int i = 0; i < dataArray.length; i++) {
+            //displayResults(results[i], dataArray[i]);
+        //}
 
 
     }
