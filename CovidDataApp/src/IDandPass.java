@@ -1,7 +1,20 @@
+/**
+ * @authors Matteo Tanzi <mtanzi@uwo.ca>, Matthew Liu <mliu493@uwo.ca>, Sahebjot Bal <sbal7@uwo.ca>
+ * 
+ * This class is for storing account information
+ */
+
+/**
+ * imported libraries used 
+ */
 import java.io.*;
 import java.util.*;
 
+/**
+ * Creates a hashmap to store usernames and passwords. It creates a new file for each user, name of file is the username and inside file is password
+ */
 public class IDandPass {
+	//class body
 
     private HashMap<String, String> loginInfo = new HashMap<String, String>();
 
@@ -21,11 +34,19 @@ public class IDandPass {
         writeUserBase(usernames, passwords);
 
     }
-
+    /**
+     * Finds account information
+     * @return user account information
+     */
     public HashMap getLoginInfo() {
         return loginInfo;
     }
 
+    /**
+     * Finds usernames stored 
+     * @param listOfFiles file where usernames are stored
+     * @return usernames if found else null
+     */
     private String[] getUsernames(File[] listOfFiles) {
         try {
             if (listOfFiles != null && listOfFiles.length > 0) {
@@ -41,6 +62,11 @@ public class IDandPass {
         return null;
     }
 
+    /**
+     * Finds passwards stored
+     * @param listOfFiles files where usernames are stored
+     * @return passwords if found else null
+     */
     private String[] getPasswords(File[] listOfFiles) {
         try {
             if (listOfFiles != null && listOfFiles.length > 0) {
@@ -62,7 +88,12 @@ public class IDandPass {
         }
         return null;
     }
-
+    
+    /**
+     * Creates new user
+     * @param users new username 
+     * @param passes new password
+     */
     private void writeUserBase(String[] users, String[] passes) {
         for (int i = 0; i < users.length; i++) {
             loginInfo.put(users[i], passes[i]);

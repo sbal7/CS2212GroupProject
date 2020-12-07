@@ -1,3 +1,12 @@
+/**
+ * @authors Matteo Tanzi <mtanzi@uwo.ca>, Matthew Liu <mliu493@uwo.ca>, Sahebjot Bal <sbal7@uwo.ca>
+ * 
+ * This class is the creating a new user window 
+ */
+
+/**
+ * imported libraries used
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,7 +18,11 @@ import java.util.HashMap;
 
 
 public class NewUserPage implements ActionListener {
-
+//class body
+	
+	/**
+	 * Initializing variables
+	 */
     private static JLabel newUserLabel;
     private static JTextField newUserTxt;
     private static JLabel newPassLabel;
@@ -21,12 +34,16 @@ public class NewUserPage implements ActionListener {
     JFrame frame = new JFrame("Create New User Covid-19 App");
     JPanel panel = new JPanel();
 
+    /**
+     * Creates a new user page UI
+     * @param loginInfoNew new account information
+     */
     NewUserPage(HashMap<String, String> loginInfoNew) {
 
         loginInfo = loginInfoNew;
 
         // Set window size
-        frame.setBounds(500,350,450,160);
+        frame.setSize(450, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setLayout(null);
@@ -71,7 +88,9 @@ public class NewUserPage implements ActionListener {
         frame.setVisible(true);
     }
 
-    @Override
+    /**
+     * This method is used to call what happens when a user presses a button on the GUI
+     */
     public void actionPerformed(ActionEvent act) {
         // Action performed if reset button is pressed
         if (act.getSource() == resetButton) {
@@ -82,12 +101,18 @@ public class NewUserPage implements ActionListener {
             okButtonAction();
         }
     }
-
+    
+    /**
+     * Clears all fields when reset button pressed
+     */
     private void resetButtonAction() {
         newUserTxt.setText(""); // empty text field
         newPassTxt.setText(""); // empty text field
     }
 
+    /**
+     * checks if user account information is valid and creates a new user then returns to the main login UI
+     */
     private void okButtonAction() {
         // Get user-name and password
         String user = newUserTxt.getText();

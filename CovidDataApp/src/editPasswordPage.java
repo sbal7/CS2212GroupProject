@@ -1,3 +1,14 @@
+/**
+ * @authors Matteo Tanzi <mtanzi@uwo.ca>, Matthew Liu <mliu493@uwo.ca>, Sahebjot Bal <sbal7@uwo.ca>
+ * 
+ * This class is for the edit password window
+ * 
+ * 
+ */
+
+/**
+ * Imported libraries 
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,6 +20,9 @@ import java.util.Scanner;
 
 public class editPasswordPage implements ActionListener {
 
+	/**
+	 * Initializes variables
+	 */
     private static JLabel newPassLabel;
     private static JPasswordField newPassTxt;
     private static JLabel oldPassLabel;
@@ -20,13 +34,19 @@ public class editPasswordPage implements ActionListener {
     JFrame frame = new JFrame("Create New Password");
     JPanel panel = new JPanel();
     String user;
-
+    
+    /**
+     * Constructor creates a edit password window 
+     * @param username Username used to login
+     * @param loginInfoNew new login info
+     */
     editPasswordPage(String username, HashMap<String, String> loginInfoNew) {
 
         user = username;
         loginInfo = loginInfoNew;
-
-        frame.setBounds(500,350,450, 160);
+        
+        //creates window for changing password
+        frame.setSize(450, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setLayout(null);
@@ -71,6 +91,9 @@ public class editPasswordPage implements ActionListener {
         frame.setVisible(true);
     }
 
+    /**
+     * Method for actions to be performed when button is pressed
+     */
     public void actionPerformed(ActionEvent act) {
         if (act.getSource() == resetButton) {
             resetButtonAction();
@@ -80,12 +103,18 @@ public class editPasswordPage implements ActionListener {
         }
 
     }
-
+    
+    /**
+     * Reset button action, clears all fields
+     */
     private void resetButtonAction() {
         oldPassTxt.setText(""); // empty text field
         newPassTxt.setText(""); // empty text field
     }
-
+    
+    /**
+     * Submit button action, changes/updates password for the username 
+     */
     private void submitButtonAction() {
 
         String filepath = "users//" + user + ".txt";

@@ -1,3 +1,11 @@
+/**
+ * @authors  Matteo Tanzi <mtanzi@uwo.ca>, Matthew Liu <mliu493@uwo.ca>, Sahebjot Bal <sbal7@uwo.ca>
+ * 
+ * This is the main user interface, and renders results
+ * 
+ */
+
+//imported libraries used
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -6,12 +14,17 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
 public class mainPage implements ActionListener {
-
+//class body
+	
+	/**
+	 * initializes variables
+	 */
     private static JFrame frame;
     private static JLabel lblAddACountry;
     private static JLabel lblRemoveACountry;
@@ -30,7 +43,15 @@ public class mainPage implements ActionListener {
     private static String[] countries;
     private static Country[] countryArray;
     private static JButton logoutButton;
+    private static JScrollPane scroll;
+    private static File imgFile;
+    private static Image img;
+    private static JLabel map;
+    private static Graphics2D editableImage;
 
+    /**
+     * This is the main user interface and what the user can see
+     */
     mainPage() {
 
         //Imports Country Array
@@ -45,10 +66,10 @@ public class mainPage implements ActionListener {
         frame.getContentPane().setLayout(null);
 
         //creates a label and puts a map jpg on main GUI
-        JLabel map = new JLabel("");
-        File file = new File("imgs//map.jpg");
+        map = new JLabel("");
+        imgFile = new File("imgs//map.jpg");
         try{
-            Image img = ImageIO.read(file);
+            img = ImageIO.read(imgFile);
             map.setIcon(new ImageIcon(img));
         }
         catch (Exception e){
@@ -104,7 +125,7 @@ public class mainPage implements ActionListener {
         //drop down for analysis
         String[] analysis = new String[]{"Total Covid Cases", "Cases per Capita", "Growth Rate", "Total Male Cases", "Total Female Cases", "Male Cases Per Capita", "Female Cases Per Capita"};
         analysisBox = new JComboBox<>(analysis);
-        analysisBox.setBounds(482, 585, 180, 27);
+        analysisBox.setBounds(482, 585, 210, 27);
         frame.getContentPane().add(analysisBox);
 
         //text for list of selected countries
@@ -130,23 +151,30 @@ public class mainPage implements ActionListener {
 
         //list of selected countries panel
         listOfSelectedCountriesPanel = new JTextArea();
-        listOfSelectedCountriesPanel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+        listOfSelectedCountriesPanel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
         listOfSelectedCountriesPanel.setEditable(false);
         listOfSelectedCountriesPanel.setBounds(1025, 65, 219, 292);
         frame.getContentPane().add(listOfSelectedCountriesPanel);
 
         //output panel
+        scroll = new JScrollPane();
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         outputPanel = new JTextArea();
-        outputPanel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+        outputPanel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
         outputPanel.setEditable(false);
         outputPanel.setBounds(1025, 410, 219, 150);
         frame.getContentPane().add(outputPanel);
-
-
+        
+        scroll.setBounds(1025, 410, 219, 150);
+        scroll.getViewport().add(outputPanel);
+        
+        frame.add(scroll);
         frame.setVisible(true);
     }
 
-    @Override
+	/**
+	 * Action performed class for buttons 
+	 */
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == addCountryButton) {
@@ -162,12 +190,16 @@ public class mainPage implements ActionListener {
             logoutButtonAction();
         }
     }
+    
+    /**
+     * Add country button, adds country to countryList, adds it to remove country box and list of selected countries panel
+     */
 
     private void addCountryButtonAction() {
         String country = addCountryBox.getSelectedItem().toString();
         int k = -1;
         for(int i = 0; i < countries.length; i++){
-            if (country.equalsIgnoreCase(countries[i])){
+            if (country.equals(countries[i])){
                 k = 1;
                 i = countries.length;
             }
@@ -180,6 +212,9 @@ public class mainPage implements ActionListener {
         }
     }
 
+    /**
+     * remove country button action, it removes country from country list, list of selected countries and remove country panel 
+     */
     private void removeCountryButtonAction() {
         if (removeCountryBox.getItemCount() > 0) {
             String country = removeCountryBox.getSelectedItem().toString();
@@ -195,17 +230,22 @@ public class mainPage implements ActionListener {
         }
     }
 
-    private void recalculateButtonAction() {
+    /**
+     * performs calculations of selected countries and renders results 
+     */
+  
+    private void recalculateButtonAction(){
 
+        
         //Read country list and compare to country object array, add all in country list to new array and send array to analysis engine
-        Country[]dataArray = new Country[countryList.size()];
+    	Country[]dataArray = new Country[countryList.size()];
         for(int i = 0; i < countryList.size(); i++){
-            //for (int j = 0; i < countryArray.length; j++){
-                //if (countryArray[j].getName().equalsIgnoreCase(countryList.get(i))){
-        	dataArray[i] = countryArray[i];
+            for (int j = 0; j < countryArray.length; j++){
+                if (countryList.get(i).equals(countryArray[j].getName())){
+                    dataArray[i] = countryArray[j];
                 }
-            //}
-        //}
+            }
+        }
         //Read analysis type and import and return data
         String Analysis = analysisBox.getSelectedItem().toString();
         double [] results = new double[dataArray.length];
@@ -233,45 +273,71 @@ public class mainPage implements ActionListener {
         }
 
         //Display results
+        outputPanel.setText(null);
         for (int i = 0; i < results.length; i++) {
-        	outputPanel.setText(null);
-        	outputPanel.append(Arrays.toString(results));
-        	}
-        //for (int i = 0; i < dataArray.length; i++) {
-            //displayResults(results[i], dataArray[i]);
-        //}
-
-
+            DecimalFormat df = new DecimalFormat("#.######");
+            outputPanel.append(dataArray[i].getName()+ "=>\n\t" + (df.format(results[i])) + "\n");
+            }
+        displayResults(results, dataArray);
+        
+  
     }
+    /**
+     * This method logs the user off the main user interface and brings them back to login page
+     */
     private void logoutButtonAction(){
         frame.dispose();
         IDandPass idandPass = new IDandPass();
         Login login = new Login(idandPass.getLoginInfo());
     }
-    private void displayResults(double result,Country data){
+    
+    /**
+     * This class renders the results after analysis 
+     * @param result calculated data 
+     * @param data array for raw data
+     */
+    private void displayResults(double [] result,Country []data){
+    	int mapWidth; 
+    	int mapHeight;
+        mapWidth = map.getWidth();
+        mapHeight = map.getHeight();
+        editableImage = (Graphics2D) map.getGraphics();
+        editableImage.getPaint();
+      
 
-        File file = new File("imgs//map.jpg");
-        int mapWidth = 0, mapHeight = 0;
-        Graphics2D editableImage = null;
-        try{
-           Image img = ImageIO.read(file);
-           mapWidth =  ((BufferedImage) img).getWidth();
-           mapHeight = ((BufferedImage) img).getHeight();
-           editableImage = (Graphics2D) img.getGraphics();
-        }
-        catch (Exception e){
-            System.out.println("Error reading map");
+        for (int i = 0; i < data.length; i++) {
+        	int biggest = biggest(result);
+            int maxOvalDimension;
+            if (biggest < 10000)
+            	maxOvalDimension = 20;
+            else if(biggest < 50000)
+            	maxOvalDimension = 30;
+            else if (biggest <100000)
+            	maxOvalDimension = 50;
+            else
+            	maxOvalDimension = 70;
+            int minOvalDimension = 15;
+            int ovalDimension = (int)Math.round(((maxOvalDimension - minOvalDimension) * i) + minOvalDimension);
+            
+            double lat = data[i].getCoordinates()[0];
+            double lng = data[i].getCoordinates()[1];
+            Point2D coords = new Point2D.Double(lng, lat);
+            Point testPoint = getXY(coords.getY(), coords.getX(), mapWidth, mapHeight);
+            
+            editableImage.setColor(Color.RED);
+            editableImage.setStroke(new BasicStroke(3));
+			editableImage.fillOval(testPoint.x - (ovalDimension/2), testPoint.y - (ovalDimension/2), ovalDimension, ovalDimension);
         }
 
-        double lng = data.getCoordinates()[0];
-        double lat = data.getCoordinates()[1];
-        Point point = getXY(lat,lng,mapWidth,mapHeight);
-        int ovalDimension = getOvalDimension(result);
-        Point2D coords = new Point2D.Double(lng, lat);
-        editableImage.setColor(Color.RED);
-        editableImage.setStroke(new BasicStroke(3));
-        editableImage.fillOval(point.x - (ovalDimension / 2), point.y - (ovalDimension / 2),ovalDimension,ovalDimension);
     }
+    /**
+     * finds coordinate on map image to render results
+     * @param lat latitude of country on map
+     * @param lng longitude of country on map
+     * @param mapWidth map width
+     * @param mapHeight map height
+     * @return coordinates on point in map image
+     */
     private Point getXY(double lat, double lng, int mapWidth, int mapHeight) {
 
         int screenX = (int) Math.round((((lng + 180) / 360) * mapWidth));
@@ -281,27 +347,25 @@ public class mainPage implements ActionListener {
         return new Point(screenX, screenY);
 
     }
-    private int getOvalDimension(double maxValue){
+    /**
+     * finds largest value 
+     * @param results computed data of countries
+     * @return largest value
+     */
+    private int biggest(double [] results){
+    	
+        double biggest = results[0];
+        for (int i = 0; i < results.length; i++){
+            if (results[i] > biggest) {
+                biggest = results[i];
+              
+            }
+            
+        }
+		return (int)Math.round(biggest);
 
-        int maxOvalDimension;
-        int minOvalDimension = 15;
-
-        if (maxValue < 1){
-            maxOvalDimension = 20;
-        }
-        else if (maxValue < 5){
-            maxOvalDimension = 30;
-        }
-        else if (maxValue < 10){
-            maxOvalDimension = 50;
-        }
-        else{
-            maxOvalDimension = 70;
-        }
-
-        return (int)Math.round(((maxOvalDimension - minOvalDimension) * maxValue) + minOvalDimension);
     }
-
+    
 
 
 }

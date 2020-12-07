@@ -1,3 +1,10 @@
+/**
+ * @authors Matteo Tanzi <mtanzi@uwo.ca>, Matthew Liu <mliu493@uwo.ca>, Sahebjot Bal <sbal7@uwo.ca>
+ * 
+ * This class is for the login windows page 
+ */
+
+//imported libraries used
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,7 +12,11 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public class Login implements ActionListener {
-
+// class body
+	
+	/**
+	 * Initializing variables 
+	 */
     private static JLabel userLabel;
     private static JTextField userTxt;
     private static JLabel passLabel;
@@ -19,16 +30,19 @@ public class Login implements ActionListener {
     JFrame frame = new JFrame("Login Covid-19 App");
     JPanel panel = new JPanel();
 
+    /**
+     * Creates GUI for logging in 
+     * @param loginInfoOg account information
+     */
     Login(HashMap<String, String> loginInfoOg) {
 
         loginInfo = loginInfoOg;
 
         // Set window size
-        frame.setBounds(500,350,450, 180);
+        frame.setBounds(600,350,450, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setLayout(null);
-        
 
         // User-name Label
         userLabel = new JLabel("Username:");
@@ -76,19 +90,16 @@ public class Login implements ActionListener {
 
         // Display message
         success = new JLabel("");
-        success.setBounds(10, 135, 500, 25);
+        success.setBounds(100, 135, 300, 25);
         panel.add(success);
 
 
         frame.setVisible(true);
     }
 
-    private Toolkit getToolkit() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
+    /**
+     * This method is used to call what happens when a user presses a button on the GUI
+     */
     public void actionPerformed(ActionEvent e) {
 
         // Action performed if reset button is pressed
@@ -108,6 +119,9 @@ public class Login implements ActionListener {
         }
     }
 
+    /**
+     * This is the action performed when user hits New User, opens new user page 
+     */
     private void NewUserButtonAction() {
         success.setText("");
         userTxt.setText("");
@@ -117,13 +131,18 @@ public class Login implements ActionListener {
         frame.dispose();
         NewUserPage newuserpage = new NewUserPage(loginInfo);
     }
-
+    
+    /**
+     * This method clears all fields when reset button is hit
+     */
     private void resetButtonAction() {
-    	success.setText("");
         userTxt.setText(""); // empty text field
         passTxt.setText(""); // empty text field
     }
 
+    /**
+     * This method logs user into the main UI, it checks if the user has entered a valid account information
+     */
     private void loginAction() {
 
         success.setText("");
@@ -158,6 +177,9 @@ public class Login implements ActionListener {
 
     }
 
+    /**
+     * Edit password action, opens edit password page 
+     */
     private void editPasswordAction() {
         String userID = userTxt.getText();
         if (userID != null) {
@@ -166,7 +188,6 @@ public class Login implements ActionListener {
                 frame.dispose();
                 editPasswordPage newPasswordPage = new editPasswordPage(userID, loginInfo);
             } else {
-            	success.setForeground(Color.red);
                 success.setText("User Doesn't Exist");
             }
         } else {

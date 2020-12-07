@@ -1,3 +1,12 @@
+/**
+ * @authors Matteo Tanzi <mtanzi@uwo.ca>, Matthew Liu <mliu493@uwo.ca>, Sahebjot Bal <sbal7@uwo.ca>
+ * 
+ * This class imports data from CSV files and API's to find names, total cases, coordinates, male/female cases, total population 
+ *and Covid-19 cases from a week ago for each country 
+ *
+ */
+
+//imports 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
@@ -9,10 +18,17 @@ import java.util.concurrent.*;
 
 
 public class countryDataImport {
+	//class body
 
+	/**
+	 * Initializes country object array
+	 */
     Country[] countryArray;
 
-
+    
+    /**
+     * Imports country name
+     */
     public countryDataImport() {
 
         int length = 0;
@@ -35,7 +51,10 @@ public class countryDataImport {
         }
 
     }
-
+    
+    /**
+     * Method to import data
+     */
     public void importMethod() {
         for (int i = 0; i < countryArray.length; i++) {
             Country country = new Country();
@@ -53,7 +72,11 @@ public class countryDataImport {
             countryArray[i] = country;
         }
     }
-
+    
+    /**
+     * Method imports data into an array 
+     * @return country array of imported data
+     */
     public Country[] getCountryArray() {
 
         File file = new File("data//apiData.csv");
@@ -70,12 +93,10 @@ public class countryDataImport {
                     Country country = new Country();
                     addDataFile(country, counter);
                     String line = scan.nextLine();
-                    int Cases, CasesY, Cases7;
+                    int Cases, Cases7;
                     Cases = Integer.parseInt(line.split(",")[1]);
-                    CasesY = Integer.parseInt(line.split(",")[2]);
                     Cases7 = Integer.parseInt(line.split(",")[3]);
                     country.setCovidCases(Cases);
-                    country.setCovidYesterday(CasesY);
                     country.setCovidWeekAgo(Cases7);
                     countryArray[counter] = country;
                     counter++;
@@ -88,7 +109,7 @@ public class countryDataImport {
                 importMethod();
                 BufferedWriter writer = new BufferedWriter(new FileWriter("data//apiData.csv"));
                 for (int i = 0; i < countryArray.length; i++) {
-                    writer.write(countryArray[i].getName() + "," + countryArray[i].getCovidCases() + "," + countryArray[i].getCovidYesterday() + "," + countryArray[i].getCovidWeekAgo());
+                    writer.write(countryArray[i].getName() + "," + countryArray[i].getCovidCases() + ","  + "," + countryArray[i].getCovidWeekAgo());
                     writer.newLine();
                 }
                 writer.close();
@@ -101,6 +122,11 @@ public class countryDataImport {
         return countryArray;
     }
 
+    /**
+     * Parses through data and sets  coordinates, male/female ratio for covid-19 cases from data.csv
+     * @param country country object to be created
+     * @param i pointer
+     */
     private void addDataFile(Country country, int i) {
 
         File file = new File("data//data.csv");
@@ -136,10 +162,16 @@ public class countryDataImport {
 
     }
 
+    /**
+     * Reads data off website and creates a json file
+     * @param country country to find data about
+     * @param k pointer
+     */
+    
     private void importAPIData(Country country, int k) {
 
         String urlString = String.format("https://api.covid19api.com/total/dayone/country/%s/status/confirmed", country.getName());
-        int covidCases, covidYesterday, covid7Days;
+        int covidCases, covid7Days;
 
         try {
             int status = 429;
@@ -169,10 +201,9 @@ public class countryDataImport {
                     JsonArray jsonArray = new JsonParser().parse(inline).getAsJsonArray();
                     int size = jsonArray.size();
                     covidCases = jsonArray.get(size - 1).getAsJsonObject().get("Cases").getAsInt();
-                    covidYesterday = jsonArray.get(size - 2).getAsJsonObject().get("Cases").getAsInt();
                     covid7Days = jsonArray.get(size - 8).getAsJsonObject().get("Cases").getAsInt();
 
-                    country.setCovidYesterday(covidYesterday);
+                  
                     country.setCovidWeekAgo(covid7Days);
                     country.setCovidCases(covidCases);
 
